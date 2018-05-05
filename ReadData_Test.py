@@ -11,154 +11,68 @@ df.drop(df.columns[cols], axis=1, inplace=True)
 df.columns = ['Name', 'Period', 'Frequency', 'DM','Distance', 'DistanceDM']
 
 for i in range(0,2635):
-    if (df.ix[i][4] == '*' or df.ix[i][4] == 'NaN' or df.ix[i][1] == '*' or df.ix[i][1] == 'NaN' or df.ix[i][5] == '*' or df.ix[i][5] == 'NaN'):
+    if (df.ix[i][4] == '*' or df.ix[i][4] == 'NaN' or
+            df.ix[i][1] == '*' or df.ix[i][1] == 'NaN' or
+            df.ix[i][5] == '*' or df.ix[i][5] == 'NaN' or
+            df.ix[i][3] == '*' or df.ix[i][3] == 'NaN' or
+            df.ix[i][2] == '*' or df.ix[i][2] == 'NaN'):
         df.drop([i], axis=0, inplace=True)
 
 df.Distance = np.array(df.Distance)
 df.Distance = df.Distance.astype(np.float)
 df.Period = np.array(df.Period)
 df.Period = df.Period.astype(np.float)
+df.DM = np.array(df.DM)
+df.DM = df.DM.astype(np.float)
+df.Frequency = np.array(df.Frequency)
+df.Frequency = df.Frequency.astype(np.float)
 
 source = ColumnDataSource(df)
 
 #Plot Data
-radii = 0.3 #np.random.random(size=N) * 1.5
-# colors = [
-#     "#%02x%02x%02x" % (int(r), int(g), 180) for r, g in zip(50+2*x, 30+2*y)   #"#d25582"
-# ]
-
 tools = "pan,wheel_zoom,box_zoom,reset,save".split(',')
 p1 = figure(x_axis_label='Distance (kpc)', y_axis_label='Period (s)', title="Period vs Distance for Known Pulsars")
 
-#"@foo{($ 0.00 a)}" # formats 1230974 as: $ 1.23 m
-
-#p1.add_tools(HoverTool( tooltips=[('Index', '$index'),('Pulsar', '@n'),("Distance (kpc)", "@x"), ("Period (s)", "@y")]))
-
-#c1 = p.circle(x=x, y=y, color='white', fill_color="#0099ff", alpha = 0.5, size=6)
-c1 = p1.circle('Distance', 'Period', color='white',fill_color='#66aecc', alpha = 0.8, size=7, source = source)
-hover = HoverTool(tooltips=[('Name', '@Name'),('Period', '@Period'),('Distance','@Distance')])
-#p.add_tools(HoverTool(renderers=[c1], tooltips=[("Years", "@x"),("Women", "@y"),]))
-#p.scatter(x, y, radius=radii, color = 'green', #fill_color='white', fill_alpha=0.5, line_color=None)
+c1 = p1.circle('Distance', 'Period', color='white',fill_color='#66aecc', alpha = 0.7, size=7, source = source)
+hover1 = HoverTool(tooltips=[('Name', '@Name'),('Period', '@Period'),('Distance','@Distance')])
 
 p1.background_fill_color = '#333333'
-#p1.background_fill_alpha = 0.99
 p1.xgrid.grid_line_dash = [6, 4]
 p1.xgrid.grid_line_alpha = 0.5
 p1.ygrid.grid_line_dash = [6, 4]
 p1.ygrid.grid_line_alpha = 0.5
 
-#p1.grid.grid_line_color = "#404040"
-
-#p.image_url(url=['/Users/gretastudier/Desktop/pulsar_image.jpg'], x=42, y=8.5, h=2, w=15)
-
 
 #p2 = figure(x_range=(0,1), y_range=(0,1),plot_width=300, plot_height=300)
 #p2.image_url(url=['/Users/gretastudier/Desktop/pulsar_image.jpg'], x=0, y=1, h=1, w=1)
 
-p1.add_tools(hover)
-output_file("color_scatter.html", title="color_scatter.py example")
-show(p1)
-#show(row(p1, p2))
+
+p2 = figure(x_axis_label='Distance (kpc)', y_axis_label='DM (pc cm^-3)', title="DM vs Distance for Known Pulsars")
+c2 = p2.circle('Distance', 'DM', color='white',fill_color='#66aecc', alpha = 0.7, size=7, source = source)
+hover2 = HoverTool(tooltips=[('Name', '@Name'),('DM', '@DM'),('Distance','@Distance')])
+
+p2.background_fill_color = '#333333'
+p2.xgrid.grid_line_dash = [6, 4]
+p2.xgrid.grid_line_alpha = 0.5
+p2.ygrid.grid_line_dash = [6, 4]
+p2.ygrid.grid_line_alpha = 0.5
 
 
+p3 = figure(x_axis_label='Distance (pc)', y_axis_label='Frequency (Hz)', title="Frequency vs Distance for Known Pulsars")
+c3 = p3.circle('Distance', 'Frequency', color='white',fill_color='#66aecc', alpha = 0.7, size=7, source = source)
+hover3 = HoverTool(tooltips=[('Name', '@Name'),('Distance', '@Distance'),('Frequency','@Frequency')])
 
+p3.background_fill_color = '#333333'
+p3.xgrid.grid_line_dash = [6, 4]
+p3.xgrid.grid_line_alpha = 0.5
+p3.ygrid.grid_line_dash = [6, 4]
+p3.ygrid.grid_line_alpha = 0.5
 
+p1.add_tools(hover1)
+p2.add_tools(hover2)
+p3.add_tools(hover3)
 
+output_file("PulsarVisualization.html", title="PulsarVisualization.py")
+#show(p1)
+show(row(p1, p2, p3))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# import pandas as pd
-#
-# from bokeh.io import output_file, show
-# from bokeh.layouts import row, widgetbox
-# from bokeh.models import Select
-# from bokeh.palettes import Spectral5
-# from bokeh.plotting import curdoc, figure
-# from bokeh.sampledata.autompg import autompg_clean as df
-#
-# df = df.copy()
-#
-# SIZES = list(range(6, 22, 3))
-# COLORS = Spectral5
-#
-# # data cleanup
-# df.cyl = df.cyl.astype(str)
-# df.yr = df.yr.astype(str)
-# del df['name']
-#
-# columns = sorted(df.columns)
-# discrete = [x for x in columns if df[x].dtype == object]
-# continuous = [x for x in columns if x not in discrete]
-# quantileable = [x for x in continuous if len(df[x].unique()) > 20]
-#
-# def create_figure():
-#     xs = df[x.value].values
-#     ys = df[y.value].values
-#     x_title = x.value.title()
-#     y_title = y.value.title()
-#
-#     kw = dict()
-#     if x.value in discrete:
-#         kw['x_range'] = sorted(set(xs))
-#     if y.value in discrete:
-#         kw['y_range'] = sorted(set(ys))
-#     kw['title'] = "%s vs %s" % (x_title, y_title)
-#
-#     p = figure(plot_height=600, plot_width=800, tools='pan,box_zoom,reset', **kw)
-#     p.xaxis.axis_label = x_title
-#     p.yaxis.axis_label = y_title
-#
-#     if x.value in discrete:
-#         p.xaxis.major_label_orientation = pd.np.pi / 4
-#
-#     sz = 9
-#     if size.value != 'None':
-#         groups = pd.qcut(df[size.value].values, len(SIZES))
-#         sz = [SIZES[xx] for xx in groups.codes]
-#
-#     c = "#31AADE"
-#     if color.value != 'None':
-#         groups = pd.qcut(df[color.value].values, len(COLORS))
-#         c = [COLORS[xx] for xx in groups.codes]
-#     p.circle(x=xs, y=ys, color=c, size=sz, line_color="white", alpha=0.6, hover_color='white', hover_alpha=0.5)
-#
-#     return p
-#
-#
-# def update(attr, old, new):
-#     layout.children[1] = create_figure()
-#
-#
-# x = Select(title='X-Axis', value='mpg', options=columns)
-# x.on_change('value', update)
-#
-# y = Select(title='Y-Axis', value='hp', options=columns)
-# y.on_change('value', update)
-#
-# size = Select(title='Size', value='None', options=['None'] + quantileable)
-# size.on_change('value', update)
-#
-# color = Select(title='Color', value='None', options=['None'] + quantileable)
-# color.on_change('value', update)
-#
-# controls = widgetbox([x, y, color, size], width=200)
-# layout = row(controls, create_figure())
-#
-# curdoc().add_root(layout)
-# curdoc().title = "Crossfilter"
-#
-# output_file("test.html")
-# #show(create_figure())

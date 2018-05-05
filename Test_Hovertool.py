@@ -19,13 +19,20 @@ df.Distance = df.Distance.astype(np.float)
 df.Period = np.array(df.Period)
 df.Period = df.Period.astype(np.float)
 
-source = ColumnDataSource(df)
-
 # Create the figure: p
 p = figure()
 
+N = 100
+#x = df.Distance
+#y = df.Period
+
+sizes = df.Distance
+#sizes = np.linspace(5, 10, N)
+
+source = ColumnDataSource(df)
+
 # Add circle glyphs to the figure p
-p.circle('Distance', 'Period', source=source)
+p.circle('Distance', 'Period', source=source, size='sizes')
 hover = HoverTool(tooltips=[('Name', '@Name'),('Distance','@Distance'),('Period', '@Period')])
 #show(p)
 
